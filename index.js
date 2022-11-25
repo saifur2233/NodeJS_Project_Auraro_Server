@@ -34,11 +34,35 @@ function verifyJWT(req, res, next) {
 async function run() {
   try {
     const productsCollection = client.db("auraro").collection("products");
+    const usersCollection = client.db("auraro").collection("users");
 
+    // product api
     app.get("/products", async (req, res) => {
       const query = {};
       const cursor = productsCollection.find(query);
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    //jwt
+    app.get("/jwt", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      if (user) {
+        const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, {
+          expiresIn: "12h",
+        });
+        return res.send({ accessToken: token });
+      }
+      res.status(403).send({ accessToken: "" });
+    });
+
+    //user api
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
       res.send(result);
     });
   } finally {
