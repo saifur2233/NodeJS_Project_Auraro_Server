@@ -91,7 +91,32 @@ async function run() {
       res.send(result);
     });
 
+    // all Seller
+    app.get("/users/sellers", async (req, res) => {
+      const query = { role: "Seller" };
+      const cursor = usersCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // all Buyer
+    app.get("/users/buyers", async (req, res) => {
+      const query = { role: "Buyer" };
+      const cursor = usersCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // order api
+
+    app.get("/orders", async (req, res) => {
+      const email = req.query.email;
+      const query = { buyerEmail: email };
+      const cursor = ordersCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.post("/orders", async (req, res) => {
       const order = req.body;
       const result = await ordersCollection.insertOne(order);
