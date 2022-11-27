@@ -36,6 +36,7 @@ async function run() {
   try {
     const productsCollection = client.db("auraro").collection("products");
     const usersCollection = client.db("auraro").collection("users");
+    const ordersCollection = client.db("auraro").collection("orders");
 
     // product api
     app.get("/products", async (req, res) => {
@@ -51,6 +52,13 @@ async function run() {
       const query = { category: category };
       const cursor = productsCollection.find(query);
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/category/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await productsCollection.findOne(query);
       res.send(result);
     });
 
@@ -79,8 +87,14 @@ async function run() {
 
     app.post("/users", async (req, res) => {
       const user = req.body;
-      console.log("User: ", user);
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    // order api
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const result = await ordersCollection.insertOne(order);
       res.send(result);
     });
   } finally {
