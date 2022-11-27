@@ -5,8 +5,9 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 
 const app = express();
-
 app.use(cors());
+app.use(express.json());
+
 const port = process.env.PORT || 5000;
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.g79cke1.mongodb.net/?retryWrites=true&w=majority`;
@@ -44,6 +45,15 @@ async function run() {
       res.send(result);
     });
 
+    // product category api
+    app.get("/category", async (req, res) => {
+      const category = req.query.category;
+      const query = { category: category };
+      const cursor = productsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     //jwt
     app.get("/jwt", async (req, res) => {
       const email = req.query.email;
@@ -60,8 +70,16 @@ async function run() {
 
     //user api
 
+    app.get("/users", async (req, res) => {
+      const query = {};
+      const cursor = usersCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.post("/users", async (req, res) => {
       const user = req.body;
+      console.log("User: ", user);
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
