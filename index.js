@@ -46,6 +46,20 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/products/seller", async (req, res) => {
+      const email = req.query.email;
+      const query = { seller: email };
+      const cursor = productsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      const result = await productsCollection.insertOne(product);
+      res.send(result);
+    });
+
     // product category api
     app.get("/category", async (req, res) => {
       const category = req.query.category;
@@ -90,6 +104,13 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
+
+    // app.get("/users/admin/:email", async (req, res) => {
+    //   const email = req.params.email;
+    //   const query = { email };
+    //   const user = await usersCollection.findOne(query);
+    //   res.send({ isAdmin: user?.role === "Admin" });
+    // });
 
     // all Seller
     app.get("/users/sellers", async (req, res) => {
