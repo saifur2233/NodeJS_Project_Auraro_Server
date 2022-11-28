@@ -60,6 +60,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await productsCollection.deleteOne(filter);
+      res.send(result);
+    });
+
     // product category api
     app.get("/category", async (req, res) => {
       const category = req.query.category;
